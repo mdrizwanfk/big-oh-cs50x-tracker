@@ -27,7 +27,9 @@
   ],
   "content_scripts": [
     {
-      "matches": ["https://cs50.harvard.edu/x/psets/*"],
+      "matches": [
+        "https://cs50.harvard.edu/x/psets/*/*/"
+      ],
       "js": ["content.js"]
     }
   ]
