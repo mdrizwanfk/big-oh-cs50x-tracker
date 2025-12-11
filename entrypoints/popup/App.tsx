@@ -3,11 +3,11 @@ import logo from '../../assets/flying-bird.png'
 
 function App() {
   return (
-    <>
-      <img src={logo} className="logo" alt="Big Oh!" />
-      <h1>Big Oh!</h1>
-      <p>A Timer/Stopwatch for CS50</p>
-    </>
+    <main className="mx-auto">
+      <img src={logo} className="mx-auto" alt="Big Oh!" />
+      <h1 className="">Big Oh!</h1>
+      <p>A CS50 Tracker</p>
+    </main>
   )
 }
 
