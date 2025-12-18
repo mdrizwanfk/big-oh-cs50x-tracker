@@ -10,6 +10,7 @@ interface SavedState {
   state: StopwatchState
   position: { x: number; y: number }
   lastSavedTimestamp?: number
+  completed?: boolean
 }
 
 const Stopwatch = () => {
@@ -18,6 +19,7 @@ const Stopwatch = () => {
   const [seconds, setSeconds] = useState(0)
   const [state, setState] = useState<StopwatchState>('idle')
   const [position, setPosition] = useState({ x: 0, y: 0 })
+  const [completed, setCompleted] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const intervalRef = useRef<number | null>(null)
@@ -58,6 +60,7 @@ const Stopwatch = () => {
     seconds: number
     state: StopwatchState
     position: { x: number; y: number }
+    completed?: boolean
   }) => {
     try {
       const key = getStorageKey()
@@ -65,6 +68,7 @@ const Stopwatch = () => {
         ...currentState,
         lastSavedTimestamp:
           currentState.state === 'running' ? Date.now() : undefined,
+        completed: currentState.completed ?? completed,
       }
       // Set flag to prevent listener from reacting to our own save
       isUpdatingFromStorageRef.current = true
@@ -97,6 +101,9 @@ const Stopwatch = () => {
           setPosition(saved.position)
           positionLoaded = true
         }
+
+        // Restore completed flag
+        setCompleted(!!saved.completed)
 
         // Restore timer state
         if (saved.state === 'running' && saved.lastSavedTimestamp) {
@@ -164,6 +171,9 @@ const Stopwatch = () => {
       ) {
         setPosition(newValue.position)
       }
+
+      // Update completed flag
+      setCompleted(!!newValue.completed)
 
       // Update timer state
       if (newValue.state !== state) {
@@ -279,13 +289,15 @@ const Stopwatch = () => {
       seconds,
       state,
       position,
+      completed,
     }).catch((error) => {
       console.error('Error saving state in effect:', error)
     })
-  }, [hours, minutes, state, position])
+  }, [hours, minutes, state, position, completed])
 
   const handleStart = () => {
     setState('running')
+    setCompleted(false)
   }
 
   const handleStop = () => {
@@ -297,13 +309,12 @@ const Stopwatch = () => {
     setHours(0)
     setMinutes(0)
     setSeconds(0)
+    setCompleted(false)
   }
 
   const handleComplete = () => {
     setState('idle')
-    setHours(0)
-    setMinutes(0)
-    setSeconds(0)
+    setCompleted(true)
   }
 
   const formatTime = (value: number, digits: number = 2) => {
@@ -376,9 +387,15 @@ const Stopwatch = () => {
         className="bg-white rounded-xl shadow-2xl p-3 min-w-[140px] cursor-grab active:cursor-grabbing"
       >
         {/* Time Display */}
-        <div className="text-2xl font-mono font-bold text-gray-900 text-center mb-3 tracking-wider">
+        <div className="text-2xl font-mono font-bold text-gray-900 text-center mb-1 tracking-wider">
           {formatTime(hours)} : {formatTime(minutes)} : {formatTime(seconds)}
         </div>
+        {/* Completed Status */}
+        {completed && (
+          <div className="text-xs text-green-700 text-center mb-2 font-semibold">
+            Completed!
+          </div>
+        )}
 
         {/* Buttons */}
         <div className="flex gap-2">

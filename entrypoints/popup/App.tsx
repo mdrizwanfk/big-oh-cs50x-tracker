@@ -9,6 +9,7 @@ interface SavedState {
   state: 'idle' | 'running' | 'stopped'
   position: { x: number; y: number }
   lastSavedTimestamp?: number
+  completed?: boolean
 }
 
 interface StopwatchEntry {
@@ -153,7 +154,9 @@ function App() {
                         className={`w-2 h-2 rounded-full ${getStateBadge(sw.state.state)}`}
                         title={sw.state.state}
                       />
-                      <span className="text-sm font-mono font-bold text-gray-900">
+                      <span
+                        className={`text-sm font-mono font-bold ${sw.state.completed ? 'text-gray-400 line-through' : 'text-gray-900'}`}
+                      >
                         {formatTime(
                           sw.state.hours,
                           sw.state.minutes,
@@ -161,11 +164,18 @@ function App() {
                         )}
                       </span>
                     </div>
-                    <div className="text-xs text-gray-600 truncate">
+                    <div className={`text-xs truncate ${sw.state.completed ? 'text-gray-400 line-through' : 'text-gray-600'}`}>
                       {formatUrl(sw.url)}
                     </div>
-                    <div className="text-xs text-gray-400 mt-1 capitalize">
-                      {sw.state.state}
+                    <div className="text-xs text-gray-400 mt-1 capitalize flex items-center gap-2">
+                      {sw.state.completed ? (
+                        <>
+                          <span className="text-green-600 font-semibold">Completed</span>
+                          <span className="sr-only">(completed)</span>
+                        </>
+                      ) : (
+                        sw.state.state
+                      )}
                     </div>
                   </div>
                   <a
