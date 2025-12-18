@@ -8,8 +8,9 @@ export default defineConfig({
     disabled: true,
   },
   manifest: {
-    name: 'Big Oh! - A Timer/Stopwatch for CS50',
-    description: 'A timer/stopwatch for CS50!',
+    name: 'Big Oh! - Track CS50x psets',
+    description:
+      'Stopwatch functionality for CS50 problem sets, helping you track your time while working on assignments.',
     permissions: ['tabs', 'storage', 'scripting'],
     host_permissions: ['https://cs50.harvard.edu/x/psets/*/*/'],
   },
